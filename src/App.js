@@ -1,26 +1,56 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
+import Todo from "./Todo";
+import TodoController from "./TodoController";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const initialState = [
+        {id: 1, title: "First", description: "Learn HTML"},
+        {id: 2, title: "Second", description: "Learn CSS"},
+        {id: 3, title: "Third", description: "Learn JS"},
+        {id: 4, title: "Fourth", description: "Learn REACT"},
+    ]
+
+    const [todos, setTodos] = useState(initialState);
+
+    const deleteTodo = (id) => {
+        const newList = todos.filter(el => el.id !== id)
+        setTodos(newList);
+    }
+    const moveTodo = (currentIndex, nextIndex) => {
+        const newList = [...todos];
+        const currentEl = newList[currentIndex];
+        newList[currentIndex] = newList[nextIndex];
+        newList[nextIndex] = currentEl;
+        setTodos(newList);
+    }
+
+    const addTodo = (newTitle, newDescription) => {
+        const newTodo = {id: Math.random(), title: newTitle, description: newDescription}
+        const newList = [...todos, newTodo];
+        setTodos(newList);
+    }
+
+    const editTodo = (newTitle, id) => {
+        const newList = todos.map(el => {
+            if (el.id === id) return {...el, title: newTitle}
+            return el })
+            setTodos(newList)
+
+    }
+    return (
+        <div>
+            <TodoController addTodo={addTodo}/>
+            {todos.map((el, index) => <Todo
+                isLast={index === todos.length - 1}
+                todo={el}
+                deleteTodo={deleteTodo}
+                moveTodo={moveTodo}
+                index={index}
+                editTodo = {editTodo}
+            />)}
+        </div>
+    );
 }
 
 export default App;
